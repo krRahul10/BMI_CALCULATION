@@ -1,7 +1,10 @@
+require('dotenv').config()
+require('./db/conn')
 const express = require("express")
 const app = express()
 const PORT = 8009
 const router = require('./routes/router')
+
 
 
 app.use(router)
