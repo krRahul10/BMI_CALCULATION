@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-// const secretKey = process.env.SECRETKEY;
+const secretKey = process.env.SECRETKEY;
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -56,18 +56,18 @@ userSchema.pre("save", async function (next) {
 
 // token generate here with the help of instance method
 
-// userSchema.methods.generateAuthToken = async function () {
-//   try {
-//     // token generate jwt sign method se hoga isme 2 parameter pass honge first payload and secretkey
+userSchema.methods.generateAuthToken = async function () {
+  try {
+    // token generate jwt sign method se hoga isme 2 parameter pass honge first payload and secretkey
 
-//     const generate_token = jwt.sign({ _id: this._id }, secretKey);
-//     this.tokens = this.tokens.concat({ token: generate_token });
-//     await this.save();
-//     return generate_token;
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+    const generate_token = jwt.sign({ _id: this._id }, secretKey);
+    this.tokens = this.tokens.concat({ token: generate_token });
+    await this.save();
+    return generate_token;
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 // userSchema.methods.addCartData = async function (cart) {
 //   try {
