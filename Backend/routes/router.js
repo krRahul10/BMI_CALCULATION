@@ -77,4 +77,20 @@ router.get("/validuser", authenticate, async (req, res) => {
     res.status(401).json({status :401, error});
   }
 });
+
+// *********** LOGOUT USER API ******
+
+router.get("/logout", authenticate, async (req, res) => {
+  try {
+    req.rootUser.tokens = req.rootUser.tokens.filter((elem) => {
+      return elem.token !== req.token;
+    });
+    res.clearCookie("BMICookie", { path: "/" });
+    req.rootUser.save();
+    res.status(201).json(req.rootUser.tokens);
+    console.log("user LogOut");
+  } catch (err) {
+    console.log(err);
+  }
+});
 module.exports = router;

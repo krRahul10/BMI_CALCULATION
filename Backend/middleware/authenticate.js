@@ -4,8 +4,8 @@ const secretKey = process.env.SECRETKEY;
 
 const authenticate = async (req, res, next) => {
   try {
-    const token = req.cookies.BMICookie;
-    console.log("cookies token", token);
+    const token = req.headers.authorization;
+    console.log("cookies token 321", token);
 
     const verifyToken = jwt.verify(token, secretKey);
 
