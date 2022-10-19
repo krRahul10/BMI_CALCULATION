@@ -114,7 +114,7 @@ const Register = () => {
                 Sign UP
               </button>
               <p>
-                Already have an account? <NavLink to="/login">Log in</NavLink>
+                Already have an account? <NavLink to="/">Log in</NavLink>
               </p>
             </form>
           </div>

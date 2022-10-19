@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
     },
   },
 
- 
   password: {
     type: String,
     required: true,
@@ -39,27 +38,16 @@ const userSchema = new mongoose.Schema({
   carts: Array,
 });
 
-// this method always use before your model
-
 userSchema.pre("save", async function (next) {
-  //isModified ka use isliye h jab hum password ko change karna chaiye tab hi ho wrna ni
-
   if (this.isModified("password")) {
-    //rounds always take maximum bcoz then nobody will decrypt your password
-
     this.password = await bcrypt.hash(this.password, 12);
   }
-  // next() agle kaam ke liye hota h ki ye hone ke baad aage ka kam ho jaye
 
   next();
 });
 
-// token generate here with the help of instance method
-
 userSchema.methods.generateAuthToken = async function () {
   try {
-    // token generate jwt sign method se hoga isme 2 parameter pass honge first payload and secretkey
-
     const generate_token = jwt.sign({ _id: this._id }, secretKey);
     this.tokens = this.tokens.concat({ token: generate_token });
     await this.save();

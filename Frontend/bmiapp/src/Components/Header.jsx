@@ -10,9 +10,9 @@ const Header = () => {
       <Navbar bg="dark" variant="dark">
         <Container>
           <Nav className="me-auto">
-            <NavLink to="/">Home</NavLink>
+            <NavLink to="/home">Home</NavLink>
           </Nav>
-          <NavLink to="/login" style={{ marginRight: "30px" }}>
+          <NavLink to="/" style={{ marginRight: "30px" }}>
             Login
           </NavLink>
 
@@ -20,6 +20,7 @@ const Header = () => {
             className="avtar"
             id="basic-button"
             aria-haspopup="true"
+            style={{ backgroundColor: "teal" }}
           ></Avatar>
         </Container>
       </Navbar>

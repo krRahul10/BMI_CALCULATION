@@ -4,11 +4,18 @@ const express = require("express")
 const app = express()
 const PORT = 8009
 const router = require('./routes/router')
-
 const cors = require("cors")
-app.use(express.json())
-app.use(cors())
+const cookieParser = require("cookie-parser")
 
+const corsOptions = {
+    origin: true, //included origin as true
+    credentials: true, //included credentials as true
+};
+
+
+app.use(express.json())
+app.use(cors(corsOptions))
+app.use(cookieParser(""))
 app.use(router)
 
 

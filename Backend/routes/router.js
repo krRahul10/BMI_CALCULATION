@@ -2,6 +2,7 @@ const express = require("express");
 const USER = require("../models/userSchema");
 const router = new express.Router();
 const bcrypt = require("bcryptjs");
+const authenticate = require("../middleware/authenticate");
 
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
@@ -38,39 +39,42 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  // console.log(email,password)
 
   if (!email || !password) {
     res.status(400).json({ error: "Please fill all the details" });
   }
   try {
-    // valid user me database is email aur body ki email check hogi
-    // uske baad wo ek user return hoga database me se
     const validUser = await USER.findOne({ email: email });
-    console.log("validUser", validUser);
-    // isMatch me password match hoga frontend aur apne database ka
-    // password one way me add hua h isliye bcrypt me compare hoga
-    // phle frontend wala password hoga fir validuser ka password hoga
-
     const isMatch = await bcrypt.compare(password, validUser.password);
 
     if (!isMatch) {
       res.status(400).json({ error: "Invalid Details" });
     } else {
-      // token generate after isMatch complete bcoz afterthat we have valid user
-
       const token = await validUser.generateAuthToken();
-      console.log(token);
 
-      // res.cookie("Amazonweb", token, {
-      //   expires: new Date(Date.now() + 9000000),
-      //   httpOnly: true,
-      // });
-      res.status(201).json(validUser);
+      res.cookie("BMICookie", token, {
+        expires: new Date(Date.now() + 9000000),
+        httpOnly: true,
+      });
+      const result = {
+        validUser,
+        token,
+      };
+      res.status(201).json({ status: 201, result });
     }
   } catch (err) {
     res.status(422).json({ error: "Invalid Details" });
   }
 });
 
+/* API FOR VALID USER CHECK IN HOME PAGE */
+
+router.get("/validuser", authenticate, async (req, res) => {
+  try {
+    const validUserOne = await USER.findOne({ _id: req.userID });
+    res.status(201).json({status :201, validUserOne});
+  } catch (error) {
+    res.status(401).json({status :401, error});
+  }
+});
 module.exports = router;

@@ -1,25 +1,67 @@
 import React, { useState } from "react";
-import { NavLink} from 'react-router-dom'
-import './mix.css'
+import { NavLink, useNavigate,  } from "react-router-dom";
+import "./mix.css";
 
 const Login = () => {
-    const [passShow, setPassShow] = useState(false);
-    const [inpval, setInpval] = useState({
-        email: "",
-        password: "",
-      });
-      // console.log(inpval);
-    
-      const setVal = (e) => {
-        const { name, value } = e.target;
-        setInpval(() => {
-          return {
-            ...inpval,
-            [name]: value,
-          };
-        });
+  const history = useNavigate();
+  const [passShow, setPassShow] = useState(false);
+  const [inpVal, setInpVal] = useState({
+    email: "",
+    password: "",
+  });
+  // console.log(inpVal);
+
+  const setVal = (e) => {
+    const { name, value } = e.target;
+    setInpVal(() => {
+      return {
+        ...inpVal,
+        [name]: value,
       };
-    
+    });
+  };
+  const loginUser = async (e) => {
+    e.preventDefault();
+    const { email, password } = inpVal;
+
+    if (email === "") {
+      alert("please enter your email");
+    } else if (!email.includes("@")) {
+      alert("please enter valid email");
+    } else if (password === "") {
+      alert("please enter your password");
+    } else if (password.length < 4) {
+      alert("password must be 4 char");
+    } else {
+     
+      const res = await fetch("http://localhost:8009/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+      // console.log("Whole data", data);
+
+      if (res.status === 201) {
+        console.log("token",data.result.token)
+        alert("User Login Successfully Done");
+        localStorage.setItem(
+          "BMIUserToken",
+          JSON.stringify(data.result.token)
+        );
+        history("/home");
+        setInpVal({ ...inpVal, email: "", password: "" });
+       
+      }
+    }
+  };
   return (
     <div>
       <section>
@@ -36,7 +78,7 @@ const Login = () => {
                 type="text"
                 name="email"
                 id="email"
-                value={inpval.email}
+                value={inpVal.email}
                 onChange={setVal}
                 placeholder="Enter Your Email Address"
               />
@@ -48,7 +90,7 @@ const Login = () => {
                   type={!passShow ? "password" : "text"}
                   name="password"
                   id="password"
-                  value={inpval.password}
+                  value={inpVal.password}
                   onChange={setVal}
                   placeholder="Enter Your Password"
                 />
@@ -60,7 +102,7 @@ const Login = () => {
                 </div>
               </div>
             </div>
-            <button className="btn" >
+            <button className="btn" onClick={loginUser}>
               Login
             </button>
             <p>
